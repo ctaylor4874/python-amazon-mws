@@ -8,7 +8,7 @@ def first_element_or_none(element_list):
     :return:
     """
     if element_list:
-        return element_list[0].strip() or None
+        return element_list[0]
     return
 
 
