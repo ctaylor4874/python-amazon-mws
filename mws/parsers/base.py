@@ -1,3 +1,5 @@
+import logging
+
 from lxml import etree
 
 
@@ -27,8 +29,17 @@ def first_element(f):
 
 class BaseElementWrapper(object):
 
-    def __init__(self, element):
+    def __init__(self, element, mws_access_key=None, mws_secret_key=None, mws_account_id=None, mws_auth_token=None):
+        """
+
+        :param element: Etree object of response body
+        """
         self.element = element
+        self.mws_access_key = mws_access_key
+        self.mws_secret_key = mws_secret_key
+        self.mws_account_id = mws_account_id
+        self.mws_auth_token = mws_auth_token
+        self.logger = logging.getLogger(self.__class__.__name__)
 
     def __str__(self):
         return etree.tostring(self.element)
@@ -37,7 +48,7 @@ class BaseElementWrapper(object):
 class BaseResponseMixin(object):
 
     @classmethod
-    def load_from_file(cls, file_location):
+    def load_from_file(cls, file_location, mws_access_key=None, mws_secret_key=None, mws_account_id=None, mws_auth_token=None):
         """
         Create an instance of this class from a file.
 
@@ -45,10 +56,10 @@ class BaseResponseMixin(object):
         :return:
         """
         with open(file_location, 'rb') as f:
-            return cls.load(f.read())
+            return cls.load(f.read(), mws_access_key, mws_secret_key, mws_account_id, mws_auth_token)
 
     @classmethod
-    def load(cls, xml_string):
+    def load(cls, xml_string, mws_access_key=None, mws_secret_key=None, mws_account_id=None, mws_auth_token=None):
         """
         Create an instance of this class using an xml string.
 
@@ -56,4 +67,4 @@ class BaseResponseMixin(object):
         :return:
         """
         tree = etree.fromstring(xml_string)
-        return cls(tree)
+        return cls(tree, mws_access_key, mws_secret_key, mws_account_id, mws_auth_token)

@@ -9,6 +9,9 @@ import urllib
 import hashlib
 import hmac
 import base64
+
+import datetime
+
 import utils
 import re
 try:
@@ -180,6 +183,12 @@ class MWS(object):
         }
         if self.auth_token:
             params['MWSAuthToken'] = self.auth_token
+
+        # Convert any datetime objects in params to string format
+        for k, v in extra_data.items():
+            if isinstance(v, datetime.datetime):
+                extra_data[k] = self.get_datetimestamp(v)
+
         params.update(extra_data)
         request_description = '&'.join(['%s=%s' % (k, urllib.quote(params[k], safe='-_.~').encode('utf-8')) for k in sorted(params)])
         signature = self.calc_signature(method, request_description)
@@ -233,6 +242,17 @@ class MWS(object):
         """
         sig_data = method + '\n' + self.domain.replace('https://', '').lower() + '\n' + self.uri + '\n' + request_description
         return base64.b64encode(hmac.new(str(self.secret_key), sig_data, hashlib.sha256).digest())
+
+    def get_datetimestamp(self, dt=None):
+        """
+        Convert datetime object or current datetime to amazon specific datetime format
+        :param dt: Datetime object to convert. If None, return current timestamp
+        :return: Converted datetime to timestamp
+        """
+        fmt = '%Y-%m-%dT%H:%M:%SZ'
+        if dt:
+            return dt.strftime(fmt)
+        return datetime.datetime.now().strftime(fmt)
 
     def get_timestamp(self):
         """
