@@ -622,6 +622,16 @@ class InboundShipments(MWS):
     URI = "/FulfillmentInboundShipment/2010-10-01"
     VERSION = '2010-10-01'
 
+    def list_inbound_shipments(self, shipment_status_list=(), shipment_id_list=(), last_updated_after=None, last_updated_before=None):
+        data = dict(
+            Action='ListInboundShipments',
+            LastUpdatedAfter=last_updated_after,
+            LastUpdatedBefore=last_updated_before
+        )
+        data.update(self.enumerate_param('ShipmentStatusList.member.', shipment_status_list))
+        data.update(self.enumerate_param('ShipmentIdList.member.', shipment_id_list))
+        return self.make_request(data)
+
     # To be completed
 
 
