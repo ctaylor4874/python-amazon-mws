@@ -12,6 +12,8 @@ import base64
 
 import datetime
 
+from lxml.etree import XMLSyntaxError
+
 import utils
 import re
 try:
@@ -203,9 +205,12 @@ class MWS(object):
             # to convert the dict to a url parsed string, so why do it twice if i can just pass the full url :).
             response = request(method, url, data=kwargs.get('body', ''), headers=headers, timeout=15)
 
-            err = ErrorResponse.load(response.content)
-            if err.message:
-                raise err
+            try:
+                err = ErrorResponse.load(response.content)
+                if err.message:
+                    raise err
+            except XMLSyntaxError:
+                pass
 
             response.raise_for_status()
             # When retrieving data from the response object,
@@ -418,6 +423,11 @@ class Reports(MWS):
     def get_report_schedule_count(self, types=()):
         data = dict(Action='GetReportScheduleCount')
         data.update(self.enumerate_param('ReportTypeList.Type.', types))
+        return self.make_request(data)
+
+    def update_report_acknowledgements(self, report_ids=(), acknowledged=False):
+        data = dict(Action='UpdateReportAcknowledgements', Acknowledged=acknowledged)
+        data.update(self.enumerate_param('ReportIdList.Id.', report_ids))
         return self.make_request(data)
 
 

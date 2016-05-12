@@ -35,10 +35,6 @@ class BaseElementWrapper(object):
         :param element: Etree object of response body
         """
         self.element = element
-        self.mws_access_key = mws_access_key
-        self.mws_secret_key = mws_secret_key
-        self.mws_account_id = mws_account_id
-        self.mws_auth_token = mws_auth_token
         self.logger = logging.getLogger(self.__class__.__name__)
 
     def __str__(self):

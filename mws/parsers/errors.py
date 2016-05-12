@@ -41,7 +41,7 @@ class ErrorResponse(ValueError, BaseElementWrapper, BaseResponseMixin):
         ptn = '\s+xmlns=\".*?\"'
         xml_string = re.sub(ptn, '', xml_string)
         tree = etree.fromstring(xml_string)
-        return cls(tree, mws_access_key, mws_secret_key, mws_account_id, mws_auth_token)
+        return cls(tree)
 
 
 class ProductError(ValueError, BaseElementWrapper):
