@@ -9,22 +9,22 @@ import urllib
 import hashlib
 import hmac
 import base64
-
+import logging
 import datetime
-
-from lxml.etree import XMLSyntaxError
-
-import utils
 import re
+
+
 try:
     from xml.etree.ElementTree import ParseError as XMLError
 except ImportError:
     from xml.parsers.expat import ExpatError as XMLError
 from time import strftime, gmtime
-
+from lxml.etree import XMLSyntaxError
 from requests import request
 from requests.exceptions import HTTPError
+
 from parsers.errors import ErrorResponse
+import utils
 
 
 __all__ = [
@@ -155,6 +155,7 @@ class MWS(object):
         self.auth_token = auth_token
         self.version = version or self.VERSION
         self.uri = uri or self.URI
+        self.logger = logging.getLogger(self.__class__.__name__)
 
         if domain:
             self.domain = domain
@@ -197,6 +198,8 @@ class MWS(object):
         url = '%s%s?%s&Signature=%s' % (self.domain, self.uri, request_description, urllib.quote(signature))
         headers = {'User-Agent': 'python-amazon-mws/0.0.1 (Language=Python)'}
         headers.update(kwargs.get('extra_headers', {}))
+
+        self.logger.debug('request_url=%s' % url)
 
         try:
             # Some might wonder as to why i don't pass the params dict as the params argument to request.
@@ -632,7 +635,28 @@ class InboundShipments(MWS):
         data.update(self.enumerate_param('ShipmentIdList.member.', shipment_id_list))
         return self.make_request(data)
 
-    # To be completed
+    def list_inbound_shipment_items(self, shipment_id, last_updated_after=None, last_updated_before=None):
+        data = dict(
+            Action='ListInboundShipmentItems',
+            ShipmentId=shipment_id,
+            LastUpdatedAfter=last_updated_after,
+            LastUpdatedBefore=last_updated_before
+        )
+        return self.make_request(data)
+
+    def list_inbound_shipments_by_next_token(self, next_token):
+        data = dict(
+            Action='ListInboundShipmentsByNextToken',
+            NextToken=next_token
+        )
+        return self.make_request(data)
+
+    def list_inbound_shipment_items_by_next_token(self, next_token):
+        data = dict(
+            Action='ListInboundShipmentItemsByNextToken',
+            NextToken=next_token
+        )
+        return self.make_request(data)
 
 
 class Inventory(MWS):
