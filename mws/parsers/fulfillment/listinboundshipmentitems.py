@@ -1,5 +1,5 @@
-import mws
 from mws.parsers.base import first_element, BaseElementWrapper, BaseResponseMixin
+from mws._mws import InboundShipments
 
 
 namespaces = {
@@ -60,13 +60,13 @@ class ListInboundShipmentItemsResponse(BaseElementWrapper, BaseResponseMixin):
 
     @classmethod
     def from_next_token(cls, mws_access_key, mws_secret_key, mws_account_id, next_token, mws_auth_token=None):
-        api = mws.InboundShipments(mws_access_key, mws_secret_key, mws_account_id, auth_token=mws_auth_token)
+        api = InboundShipments(mws_access_key, mws_secret_key, mws_account_id, auth_token=mws_auth_token)
         response = api.list_inbound_shipment_items_by_next_token(next_token)
         return cls.load(response.original)
 
     @classmethod
     def request(cls, mws_access_key, mws_secret_key, mws_account_id, shipment_id,
                 mws_auth_token=None, last_updated_after=None, last_updated_before=None):
-        api = mws.InboundShipments(mws_access_key, mws_secret_key, mws_account_id, auth_token=mws_auth_token)
+        api = InboundShipments(mws_access_key, mws_secret_key, mws_account_id, auth_token=mws_auth_token)
         response = api.list_inbound_shipment_items(shipment_id, last_updated_after, last_updated_before)
         return cls.load(response.original)

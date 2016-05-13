@@ -1,6 +1,5 @@
 from mws.parsers.base import BaseResponseMixin, BaseElementWrapper, first_element
-import mws
-
+from mws._mws import InboundShipments
 
 namespaces = {
     'a': 'http://mws.amazonaws.com/FulfillmentInboundShipment/2010-10-01/'
@@ -56,7 +55,7 @@ class ListInboundShipmentResponse(BaseElementWrapper, BaseResponseMixin):
 
     @classmethod
     def from_next_token(cls, mws_access_key, mws_secret_key, mws_account_id, next_token, mws_auth_token=None):
-        api = mws.InboundShipments(mws_access_key, mws_secret_key, mws_account_id, auth_token=mws_auth_token)
+        api = InboundShipments(mws_access_key, mws_secret_key, mws_account_id, auth_token=mws_auth_token)
         response = api.list_inbound_shipments_by_next_token(next_token)
         return cls.load(response.original)
 
@@ -64,6 +63,6 @@ class ListInboundShipmentResponse(BaseElementWrapper, BaseResponseMixin):
     def request(cls, mws_access_key, mws_secret_key, mws_account_id,
                 mws_auth_token=None, shipment_status_list=(), shipment_id_list=(),
                 last_updated_after=None, last_updated_before=None):
-        api = mws.InboundShipments(mws_access_key, mws_secret_key, mws_account_id, auth_token=mws_auth_token)
+        api = InboundShipments(mws_access_key, mws_secret_key, mws_account_id, auth_token=mws_auth_token)
         response = api.list_inbound_shipments(shipment_status_list, shipment_id_list, last_updated_after, last_updated_before)
         return cls.load(response.original)

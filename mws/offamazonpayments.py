@@ -1,4 +1,4 @@
-from .mws import MWS
+from ._mws import MWS
 
 
 class OffAmazonPayments(MWS):
