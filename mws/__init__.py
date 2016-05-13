@@ -3,5 +3,5 @@ __version__ = '0.6'
 
 from mws import *
 from parsers.products import GetMatchingProductForIdResponse, GetCompetitivePricingForAsinResponse
-from from parsers.fulfillment import *
+from parsers.fulfillment import *
 
