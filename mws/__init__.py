@@ -5,3 +5,4 @@ from _mws import InboundShipments, Inventory, Products, Feeds, Reports, \
     Orders, Sellers, Recommendations, OutboundShipments
 from parsers.products import GetMatchingProductForIdResponse, GetCompetitivePricingForAsinResponse
 from parsers.fulfillment import ListInboundShipmentResponse, ListInboundShipmentItemsResponse
+from parsers.orders import ListOrdersResponse, ListOrderItemsResponse
