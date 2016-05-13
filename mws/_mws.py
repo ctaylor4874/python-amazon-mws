@@ -23,7 +23,6 @@ from lxml.etree import XMLSyntaxError
 from requests import request
 from requests.exceptions import HTTPError
 
-from parsers.errors import ErrorResponse
 import utils
 
 
@@ -209,6 +208,7 @@ class MWS(object):
             response = request(method, url, data=kwargs.get('body', ''), headers=headers, timeout=15)
 
             try:
+                from parsers.errors import ErrorResponse
                 err = ErrorResponse.load(response.content)
                 if err.message:
                     raise err

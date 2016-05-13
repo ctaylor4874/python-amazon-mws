@@ -1,3 +1,3 @@
-from products import *
+from products import GetMatchingProductForIdResponse, GetCompetitivePricingForAsinResponse
 from errors import ErrorResponse, ProductError
-from fulfillment import *
+from fulfillment import ListInboundShipmentItemsResponse, ListInboundShipmentResponse

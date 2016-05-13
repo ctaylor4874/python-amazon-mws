@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 __version__ = '0.6'
 
-from _mws import *
+from _mws import InboundShipments, Inventory, Products, Feeds, Reports, \
+    Orders, Sellers, Recommendations, OutboundShipments
 from parsers.products import GetMatchingProductForIdResponse, GetCompetitivePricingForAsinResponse
-from parsers.fulfillment import *
-
+from parsers.fulfillment import ListInboundShipmentResponse, ListInboundShipmentItemsResponse

@@ -1,5 +1,5 @@
+from mws import InboundShipments
 from mws.parsers.base import BaseResponseMixin, BaseElementWrapper, first_element
-from mws._mws import InboundShipments
 
 namespaces = {
     'a': 'http://mws.amazonaws.com/FulfillmentInboundShipment/2010-10-01/'
