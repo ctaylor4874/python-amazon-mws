@@ -61,14 +61,14 @@ class ProductError(ValueError, BaseElementWrapper):
     @property
     @first_element
     def message(self):
-        return self.element.xpath('./a:Message/text()')
+        return self.element.xpath('./a:Message/text()', namespaces=self.namespaces)
 
     @property
     @first_element
     def code(self):
-        return self.element.xpath('./a:Code/text()')
+        return self.element.xpath('./a:Code/text()', namespaces=self.namespaces)
 
     @property
     @first_element
     def type(self):
-        return self.element.xpath('./a:Type/text()')
+        return self.element.xpath('./a:Type/text()', namespaces=self.namespaces)
