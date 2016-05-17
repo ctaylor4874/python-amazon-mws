@@ -247,7 +247,7 @@ class RequestReportResponse(BaseElementWrapper, BaseResponseMixin):
         :return:
         """
         api = mws.Reports(self.mws_access_key, self.mws_secret_key, self.mws_account_id, auth_token=self.mws_auth_token)
-        api.update_report_acknowledgements((self.report_id,), True)
+        api.update_report_acknowledgements(report_ids=(self.report_id,), acknowledged=True)
 
     def wait_and_download(self):
         """
@@ -283,3 +283,23 @@ class RequestReportResponse(BaseElementWrapper, BaseResponseMixin):
         if err.message:
             raise err
         return cls.load(response.original, mws_access_key, mws_secret_key, mws_account_id, mws_auth_token)
+
+
+class FlatFileWrapper(object):
+    """
+    Parser/generator for flat file report contents
+    """
+
+    def __init__(self, report_contents):
+        self.report_contents = report_contents
+        # Split the report into lines and strip any excess whitespace from each line.
+        self._lines = [x.strip() for x in self.report_contents.split('\n')]
+        self.headers = self._lines.pop(0)
+
+    def lines(self):
+        """
+        Generator function yielding each line's contents in a tuple.
+        :return:
+        """
+        for line in self._lines:
+            yield tuple([x.strip() for x in line.split('\t')])

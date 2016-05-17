@@ -429,7 +429,7 @@ class Reports(MWS):
         return self.make_request(data)
 
     def update_report_acknowledgements(self, report_ids=(), acknowledged=False):
-        data = dict(Action='UpdateReportAcknowledgements', Acknowledged=acknowledged)
+        data = dict(Action='UpdateReportAcknowledgements', Acknowledged='true' if acknowledged else 'false')
         data.update(self.enumerate_param('ReportIdList.Id.', report_ids))
         return self.make_request(data)
 
