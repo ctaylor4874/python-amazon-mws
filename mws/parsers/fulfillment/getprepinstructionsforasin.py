@@ -10,9 +10,6 @@ namespaces = {
 
 class ASINPrepInstructions(BaseElementWrapper):
 
-    def __init__(self, element, mws_access_key=None, mws_secret_key=None, mws_account_id=None, mws_auth_token=None):
-        BaseElementWrapper.__init__(self, element)
-
     @property
     @first_element
     def asin(self):
