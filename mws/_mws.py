@@ -658,6 +658,22 @@ class InboundShipments(MWS):
         )
         return self.make_request(data)
 
+    def get_prep_instructions_for_asin(self, asin_list, ship_to_country_code):
+        """
+
+        :param asin_list: List of asins to get prep instructions for.
+        :param ship_to_country_code: 2 character country code abbreviation.
+            See docs at http://docs.developer.amazonservices.com/en_US/dev_guide/DG_ISO3166.html to
+            get country code values.
+        :return:
+        """
+        data = dict(
+            Action='GetPrepInstructionsForASIN',
+            ShipToCountryCode=ship_to_country_code
+        )
+        data.update(self.enumerate_param('ASINList.Id.', asin_list))
+        return self.make_request(data)
+
 
 class Inventory(MWS):
     """ Amazon MWS Inventory Fulfillment API """
