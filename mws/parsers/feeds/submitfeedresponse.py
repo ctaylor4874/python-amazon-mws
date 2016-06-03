@@ -46,6 +46,8 @@ class GetFeedSubmissionListResponse(BaseElementWrapper, BaseResponseMixin):
     def request(cls, mws_access_key, mws_secret_key, mws_account_id, mws_auth_token=None, feed_submission_id_list=(), max_count=None, feedtypes=(), processingstatuses=(), fromdate=None, todate=None):
         api = Feeds(mws_access_key, mws_secret_key, mws_account_id, auth_token=mws_auth_token)
         response = api.get_feed_submission_list(feed_submission_id_list, max_count, feedtypes, processingstatuses, fromdate, todate)
+        with open('GetFeedSubmissionListResponse.xml', 'wb') as f:
+            f.write(response.original)
         err = ErrorResponse.load(response.original)
         if err.message:
             raise err
