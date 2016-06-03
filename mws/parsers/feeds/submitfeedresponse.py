@@ -98,4 +98,6 @@ class SubmitFeedResponse(BaseElementWrapper, BaseResponseMixin):
         err = ErrorResponse.load(response.original)
         if err.message:
             raise err
+        with open('SubmitFeedResponse.xml', 'wb') as f:
+            f.write(response.original)
         return cls.load(response.original, mws_access_key, mws_secret_key, mws_account_id, mws_auth_token)
