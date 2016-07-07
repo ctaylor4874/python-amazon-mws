@@ -2,7 +2,7 @@
 __version__ = '0.6'
 
 from _mws import InboundShipments, Inventory, Products, Feeds, Reports, \
-    Orders, Sellers, Recommendations, OutboundShipments
+    Orders, Sellers, Recommendations, OutboundShipments, MWSError
 from parsers.products import GetMatchingProductForIdResponse, GetCompetitivePricingForAsinResponse
 from parsers.fulfillment import ListInboundShipmentResponse, ListInboundShipmentItemsResponse, \
     GetPrepInstructionsForASINResponse
