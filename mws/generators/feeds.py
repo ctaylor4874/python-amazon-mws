@@ -45,9 +45,10 @@ class BaseFeed(object):
         status = ''
         feed_submission_id = None
         while not done:
+            feed_submission_id = response.feed_submission_id
             time.sleep(60)  # sleep before querying since it takes time to process and so that when the report is _DONE_ the loop is immediately broken.
-            response = GetFeedSubmissionListResponse.request(self.access_key, self.secret_key, self.account_id, self.auth_token, (response.feed_submission_id,))
-            request_result = response.feed_submission_info_list()[0]
+            r = GetFeedSubmissionListResponse.request(self.access_key, self.secret_key, self.account_id, self.auth_token, (feed_submission_id,))
+            request_result = r.feed_submission_info_list()[0]
             status = request_result.feed_processing_status
             self.logger.debug('feed_submission_id=%s report_processing_status=%s' % (feed_submission_id, status))
             done = bool(request_result._completed_processing_date)
