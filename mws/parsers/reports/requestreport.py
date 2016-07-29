@@ -3,7 +3,7 @@ import time
 import datetime
 
 import mws
-from mws.parsers.base import BaseElementWrapper, BaseResponseMixin, first_element
+from mws.parsers.base import BaseElementWrapper, BaseResponseMixin, first_element, parse_bool
 from dateutil import parser
 from mws.parsers.errors import ErrorResponse
 
@@ -134,6 +134,60 @@ class GetReportRequestList(BaseElementWrapper, BaseResponseMixin):
         return cls.load(response.original, mws_access_key, mws_secret_key, mws_account_id, mws_auth_token)
 
 
+class ReportInfo(BaseElementWrapper):
+
+    @property
+    @first_element
+    def report_type(self):
+        return self.element.xpath('./a:ReportType/text()', namespaces=namespaces)
+
+    @property
+    @parse_bool
+    @first_element
+    def acknowledged(self):
+        return self.element.xpath('./a:Acknowledged/text()', namespaces=namespaces)
+
+    @property
+    @first_element
+    def report_id(self):
+        return self.element.xpath('./a:ReportId/text()', namespaces=namespaces)
+
+    @property
+    @first_element
+    def report_request_id(self):
+        return self.element.xpath('./a:ReportRequestId/text()', namespaces=namespaces)
+
+    @property
+    @first_element
+    def available_date(self):
+        return self.element.xpath('./a:AvailableDate/text()', namespaces=namespaces)
+
+
+class GetReportList(BaseElementWrapper, BaseResponseMixin):
+
+    @property
+    @first_element
+    def next_token(self):
+        return self.element.xpath('//a:NextToken/text()', namespaces=namespaces)
+
+    @property
+    def report_info_list(self):
+        return [ReportInfo(x) for x in self.element.xpath('./a:GetReportListResult//a:ReportInfo', namespaces=namespaces)]
+
+    @classmethod
+    def request(cls, mws_access_key, mws_secret_key, mws_account_id, request_ids=(), max_count=None, types=(),
+                acknowledged=None, fromdate=None, todate=None):
+        api = mws.Reports(mws_access_key, mws_secret_key, mws_account_id)
+        response = api.get_report_list(requestids=request_ids, max_count=max_count, types=types,
+                                       acknowledged=acknowledged, fromdate=fromdate, todate=todate)
+
+        err = ErrorResponse.load(response.original)
+        if err.message:
+            raise err
+
+        return cls.load(response.original, mws_access_key, mws_secret_key, mws_account_id)
+
+
 class RequestReportResponse(BaseElementWrapper, BaseResponseMixin):
     # How many days to look back for start of report
     START_DATE_DAYS = 30
@@ -261,6 +315,16 @@ class RequestReportResponse(BaseElementWrapper, BaseResponseMixin):
         self.logger.info('Acknowledging report (request_id=%s - generated_report_id=%s)' % (self.report_request_id, self.report_id))
         self._acknowledge_report()
         return contents
+
+    @classmethod
+    def download_most_recent(cls, mws_access_key, mws_secret_key, mws_account_id, report_enumeration_type):
+        get_report_list = GetReportList.request(mws_access_key, mws_secret_key, mws_account_id, types=(report_enumeration_type,))
+        if get_report_list.report_info_list:
+            report_id = get_report_list.report_info_list[0].report_id
+            api = mws.Reports(mws_access_key, mws_secret_key, mws_account_id)
+            response = api.get_report(report_id)
+            return response.original
+        raise mws.MWSError('No reports for `{}`'.format(report_enumeration_type))
 
     @classmethod
     def request(cls, mws_access_key, mws_secret_key, mws_account_id,

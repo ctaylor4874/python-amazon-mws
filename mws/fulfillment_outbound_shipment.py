@@ -719,11 +719,12 @@ class CreateFulfillmentOrder(DictParam, MWS):
     max_displayable_order_comment_len = 1000
     max_email_len = 60
 
-    def __init__(self, access_key, secret_key, account_id, region='US', domain='', uri="", version="", auth_token="",
-                 marketplace_id='ATVPDKIKX0DER', seller_fulfillment_order_id='', fulfillment_action='Ship',
-                 displayable_order_id='1', displayable_order_date_time='', displayable_order_comment='',
-                 shipping_speed_category='Standard', destination_address=None, fulfillment_policy='FillOrKill',
-                 notification_email_list=(), cod_settings=None, items=(), delivery_window=None):
+    def __init__(self, access_key, secret_key, account_id, region='US', domain='', uri="", version="2010-10-01",
+                 auth_token="", marketplace_id='ATVPDKIKX0DER', seller_fulfillment_order_id='',
+                 fulfillment_action='Ship', displayable_order_id='1', displayable_order_date_time='',
+                 displayable_order_comment='', shipping_speed_category='Standard', destination_address=None,
+                 fulfillment_policy='FillOrKill', notification_email_list=(), cod_settings=None, items=(),
+                 delivery_window=None):
         super(DictParam, self).__init__()
         MWS.__init__(self, access_key, secret_key, account_id, region, domain, uri, version, auth_token)
         self.marketplace_id = marketplace_id

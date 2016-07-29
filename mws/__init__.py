@@ -8,3 +8,4 @@ from parsers.fulfillment import ListInboundShipmentResponse, ListInboundShipment
     GetPrepInstructionsForASINResponse
 from parsers.orders import ListOrdersResponse, ListOrderItemsResponse
 from fulfillment_outbound_shipment import CreateFulfillmentOrder
+from parsers import RequestReportResponse

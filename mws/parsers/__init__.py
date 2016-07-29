@@ -2,3 +2,4 @@ from products import GetMatchingProductForIdResponse, GetCompetitivePricingForAs
 from errors import ErrorResponse, ProductError
 from fulfillment import ListInboundShipmentItemsResponse, ListInboundShipmentResponse
 from orders import ListOrdersResponse, ListOrderItemsResponse
+from reports import RequestReportResponse
