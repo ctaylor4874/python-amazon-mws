@@ -7,4 +7,4 @@ from parsers.products import GetMatchingProductForIdResponse, GetCompetitivePric
 from parsers.fulfillment import ListInboundShipmentResponse, ListInboundShipmentItemsResponse, \
     GetPrepInstructionsForASINResponse
 from parsers.orders import ListOrdersResponse, ListOrderItemsResponse
-
+from fulfillment_outbound_shipment import CreateFulfillmentOrder
