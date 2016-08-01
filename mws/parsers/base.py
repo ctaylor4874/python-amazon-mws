@@ -27,6 +27,13 @@ def first_element(f):
     return inner
 
 
+def parse_bool(f):
+
+    def inner(*args, **kwargs):
+        return f(*args, **kwargs) == 'true'
+    return inner
+
+
 class BaseElementWrapper(object):
 
     def __init__(self, element, mws_access_key=None, mws_secret_key=None, mws_account_id=None, mws_auth_token=None):
