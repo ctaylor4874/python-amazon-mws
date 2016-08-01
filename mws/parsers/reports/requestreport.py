@@ -172,7 +172,7 @@ class GetReportList(BaseElementWrapper, BaseResponseMixin):
 
     @property
     def report_info_list(self):
-        return [ReportInfo(x) for x in self.element.xpath('./a:GetReportListResult//a:ReportInfo', namespaces=namespaces)]
+        return [ReportInfo(x) for x in self.element.xpath('./a:GetReportListResult//a:ReportInfo|./a:GetReportListByNextTokenResult//a:ReportInfo', namespaces=namespaces)]
 
     @classmethod
     def request(cls, mws_access_key, mws_secret_key, mws_account_id, request_ids=(), max_count=None, types=(),
