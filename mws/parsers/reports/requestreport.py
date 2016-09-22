@@ -1,11 +1,11 @@
 import time
-
 import datetime
+import re
 
 import mws
 from mws.parsers.base import BaseElementWrapper, BaseResponseMixin, first_element, parse_bool
-from dateutil import parser
 from mws.parsers.errors import ErrorResponse
+from dateutil import parser
 
 namespaces = {'a': 'http://mws.amazonaws.com/doc/2009-01-01/'}
 
@@ -354,11 +354,40 @@ class FlatFileWrapper(object):
     Parser/generator for flat file report contents
     """
 
-    def __init__(self, report_contents):
+    def __init__(self, report_contents, convert_numerical=False):
         self.report_contents = report_contents
         # Split the report into lines and strip any excess whitespace from each line.
-        self._lines = [x.strip() for x in self.report_contents.split('\n')]
+        self._lines = self.report_contents.split('\n')
         self.headers = self._lines.pop(0)
+        self.convert_numerical = convert_numerical
+
+    def offset_dt(self, dt):
+        """
+        Calculate the UTC offset and apply it to a datetime object returned from amazon since they use GMT.
+        :param dt:
+        :return:
+        """
+        offset = datetime.datetime.utcnow() - datetime.datetime.now()
+        seconds_offset = round(offset.total_seconds()) / 60
+        return dt - datetime.timedelta(seconds=seconds_offset)
+
+    def convert_text(self, t):
+        """
+        Convert text into proper data type.
+        :param t:
+        :return:
+        """
+        # Convert datetime
+        if re.search('\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\+\d{2}:\d{2})?', t):
+            return self.offset_dt(parser.parse(t))
+        if self.convert_numerical:
+            if re.search('^\d+\.\d+$', t):
+                return float(t)
+            if re.search('^\d+$', t):
+                return int(t)
+        if not t:
+            return None
+        return t
 
     def lines(self):
         """
@@ -366,4 +395,12 @@ class FlatFileWrapper(object):
         :return:
         """
         for line in self._lines:
-            yield tuple([x.strip() for x in line.split('\t')])
+            t = tuple(self.convert_text(x.strip()) for x in line.split('\t'))
+            yield t
+
+    def __iter__(self):
+        for line in self.lines():
+            yield line
+
+    def __str__(self):
+        return self.report_contents
