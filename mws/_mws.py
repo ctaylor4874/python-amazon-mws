@@ -192,7 +192,11 @@ class MWS(object):
                 extra_data[k] = self.get_datetimestamp(v)
 
         params.update(extra_data)
-        request_description = '&'.join(['%s=%s' % (k, urllib.quote(params[k], safe='-_.~').encode('utf-8')) for k in sorted(params)])
+        try:
+            request_description = '&'.join(['%s=%s' % (k, urllib.quote(params[k], safe='-_.~').encode('utf-8')) for k in sorted(params)])
+        except TypeError:
+            self.logger.error('url params:\n    {}'.format('\n    '.format(' = '.join(x) for x in params.items())))
+            raise
         signature = self.calc_signature(method, request_description)
         url = '%s%s?%s&Signature=%s' % (self.domain, self.uri, request_description, urllib.quote(signature))
         headers = {'User-Agent': 'python-amazon-mws/0.0.1 (Language=Python)'}
