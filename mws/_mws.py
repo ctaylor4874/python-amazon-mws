@@ -198,7 +198,7 @@ class MWS(object):
         headers = {'User-Agent': 'python-amazon-mws/0.0.1 (Language=Python)'}
         headers.update(kwargs.get('extra_headers', {}))
 
-        self.logger.debug('request_url=%s' % url)
+        self.logger.debug('request_url: {}'.format(url))
 
         try:
             # Some might wonder as to why i don't pass the params dict as the params argument to request.
@@ -206,6 +206,7 @@ class MWS(object):
             # if i pass the params dict as params to request, request will repeat that step because it will need
             # to convert the dict to a url parsed string, so why do it twice if i can just pass the full url :).
             response = request(method, url, data=kwargs.get('body', ''), headers=headers, timeout=15)
+            self.logger.debug('response headers:\n    {}'.format('\n    '.join([' = '.join(x) for x in response.headers.items()])))
 
             try:
                 from parsers.errors import ErrorResponse
@@ -249,6 +250,7 @@ class MWS(object):
         """Calculate MWS signature to interface with Amazon
         """
         sig_data = method + '\n' + self.domain.replace('https://', '').lower() + '\n' + self.uri + '\n' + request_description
+        self.logger.debug('string to sign:\n    {}'.format('\n    '.join(sig_data.split('\n'))))
         return base64.b64encode(hmac.new(str(self.secret_key), sig_data, hashlib.sha256).digest())
 
     def get_datetimestamp(self, dt=None):
