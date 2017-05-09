@@ -1,5 +1,5 @@
 import datetime
-from _mws import MWS
+from ._mws import MWS
 
 
 def remove_empty(d):

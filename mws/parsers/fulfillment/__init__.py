@@ -1,3 +1,3 @@
-from listinboundshipments import ListInboundShipmentResponse
-from listinboundshipmentitems import ListInboundShipmentItemsResponse
-from getprepinstructionsforasin import GetPrepInstructionsForASINResponse
+from .listinboundshipments import ListInboundShipmentResponse
+from .listinboundshipmentitems import ListInboundShipmentItemsResponse
+from .getprepinstructionsforasin import GetPrepInstructionsForASINResponse

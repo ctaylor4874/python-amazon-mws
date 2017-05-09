@@ -1,5 +1,5 @@
-from products import GetMatchingProductForIdResponse, GetCompetitivePricingForAsinResponse
-from errors import ErrorResponse, ProductError
-from fulfillment import ListInboundShipmentItemsResponse, ListInboundShipmentResponse
-from orders import ListOrdersResponse, ListOrderItemsResponse
-from reports import RequestReportResponse
+from .products import GetMatchingProductForIdResponse, GetCompetitivePricingForAsinResponse
+from .errors import ErrorResponse, ProductError
+from .fulfillment import ListInboundShipmentItemsResponse, ListInboundShipmentResponse
+from .orders import ListOrdersResponse, ListOrderItemsResponse
+from .reports import RequestReportResponse

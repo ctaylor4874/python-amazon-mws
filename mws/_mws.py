@@ -23,7 +23,7 @@ from lxml.etree import XMLSyntaxError
 from requests import request
 from requests.exceptions import HTTPError
 
-import utils
+from . import utils
 
 
 __all__ = [
@@ -233,7 +233,7 @@ class MWS(object):
             except XMLError:
                 parsed_response = DataWrapper(data, response.headers)
 
-        except HTTPError, e:
+        except HTTPError as e:
             error = MWSError(str(e.response.text))
             error.response = e.response
             raise error

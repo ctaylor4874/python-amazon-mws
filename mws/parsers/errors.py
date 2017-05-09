@@ -1,5 +1,5 @@
 import re
-from base import first_element, BaseResponseMixin, BaseElementWrapper
+from .base import first_element, BaseResponseMixin, BaseElementWrapper
 from lxml import etree
 
 
