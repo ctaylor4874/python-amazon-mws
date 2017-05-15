@@ -5,7 +5,11 @@
 # Based on http://code.google.com/p/amazon-mws-python
 #
 
-import urllib
+try:
+    from urllib.parse import quote  # Python 3+
+except ImportError:
+    from urllib import quote  # Python 2.X
+
 import hashlib
 import hmac
 import base64
@@ -23,7 +27,7 @@ from lxml.etree import XMLSyntaxError
 from requests import request
 from requests.exceptions import HTTPError
 
-from . import utils
+from .utils import xml2dict
 
 
 __all__ = [
@@ -51,7 +55,7 @@ MARKETPLACES = {
     "UK" : "https://mws-eu.amazonservices.com", #A1F83G8C2ARO7P
     "JP" : "https://mws.amazonservices.jp", #A1VC38T7YXB528
     "CN" : "https://mws.amazonservices.com.cn", #AAHKV2X7AFYLW
-    "MX" : "https://mws.amazonservices.com.mx", #A1AM78C64UM0Y8    
+    "MX" : "https://mws.amazonservices.com.mx", #A1AM78C64UM0Y8
 }
 
 
@@ -69,7 +73,7 @@ def calc_md5(string):
     """
     md = hashlib.md5()
     md.update(string)
-    return base64.encodestring(md.digest()).strip('\n')
+    return base64.encodebytes(md.digest()).strip('\n')
 
 
 def remove_empty(d):
@@ -77,7 +81,7 @@ def remove_empty(d):
         Helper function that removes all keys from a dictionary (d),
         that have an empty value.
     """
-    for key in d.keys():
+    for key in list(d):
         if not d[key]:
             del d[key]
     return d
@@ -92,7 +96,7 @@ class DictWrapper(object):
     def __init__(self, xml, rootkey=None):
         self.original = xml
         self._rootkey = rootkey
-        self._mydict = utils.xml2dict().fromstring(remove_namespace(xml))
+        self._mydict = xml2dict().fromstring(remove_namespace(xml))
         self._response_dict = self._mydict.get(self._mydict.keys()[0],
                                                self._mydict)
 
@@ -193,12 +197,12 @@ class MWS(object):
 
         params.update(extra_data)
         try:
-            request_description = '&'.join(['%s=%s' % (k, urllib.quote(params[k], safe='-_.~').encode('utf-8')) for k in sorted(params)])
+            request_description = '&'.join(['%s=%s' % (k, quote(params[k], encoding='utf-8', safe='-_.~')) for k in sorted(params)])
         except TypeError:
             self.logger.error('url params:\n    {}'.format('\n    '.format(' = '.join(x) for x in params.items())))
             raise
         signature = self.calc_signature(method, request_description)
-        url = '%s%s?%s&Signature=%s' % (self.domain, self.uri, request_description, urllib.quote(signature))
+        url = '%s%s?%s&Signature=%s' % (self.domain, self.uri, request_description, quote(signature))
         headers = {'User-Agent': 'python-amazon-mws/0.0.1 (Language=Python)'}
         headers.update(kwargs.get('extra_headers', {}))
 
@@ -213,7 +217,7 @@ class MWS(object):
             self.logger.debug('response headers:\n    {}'.format('\n    '.join([' = '.join(x) for x in response.headers.items()])))
 
             try:
-                from parsers.errors import ErrorResponse
+                from .parsers.errors import ErrorResponse
                 err = ErrorResponse.load(response.content)
                 if err.message:
                     raise err
@@ -254,8 +258,10 @@ class MWS(object):
         """Calculate MWS signature to interface with Amazon
         """
         sig_data = method + '\n' + self.domain.replace('https://', '').lower() + '\n' + self.uri + '\n' + request_description
-        self.logger.debug('string to sign:\n    {}'.format('\n    '.join(sig_data.split('\n'))))
-        return base64.b64encode(hmac.new(str(self.secret_key), sig_data, hashlib.sha256).digest())
+        self.logger.debug('string to sign:\n    {}'.format('\n    '.join(sig_data.split('&'))))
+        x = base64.b64encode(hmac.new(bytes(self.secret_key, encoding='utf-8'), bytes(sig_data, encoding='utf-8'), hashlib.sha256).digest())
+        self.logger.debug(quote(x))
+        return quote(x)
 
     def get_datetimestamp(self, dt=None):
         """

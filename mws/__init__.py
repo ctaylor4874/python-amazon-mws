@@ -2,7 +2,8 @@
 __version__ = '0.6'
 
 from ._mws import InboundShipments, Inventory, Products, Feeds, Reports, \
-    Orders, Sellers, Recommendations, OutboundShipments, MWSError, DictWrapper, MWS, remove_empty, DataWrapper, calc_md5
+    Orders, Sellers, Recommendations, OutboundShipments, MWSError, DictWrapper, MWS, remove_empty, DataWrapper, \
+    calc_md5, XMLError
 from .parsers.products import GetMatchingProductForIdResponse, GetCompetitivePricingForAsinResponse
 from .parsers.fulfillment import ListInboundShipmentResponse, ListInboundShipmentItemsResponse, \
     GetPrepInstructionsForASINResponse
